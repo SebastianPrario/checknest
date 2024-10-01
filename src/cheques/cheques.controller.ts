@@ -21,23 +21,23 @@ export class ChequesController {
   @Post()
   @UseGuards(AuthGuard)
   async create(@Request() req, @Body() createChequeDto: CreateChequeDto) {
-    const user = await req.user;
-    return this.chequesService.create(createChequeDto, user.userId);
+    const userId = await req.user;
+    return this.chequesService.create(createChequeDto, userId);
   }
 
   @Get()
   @UseGuards(AuthGuard)
   // toma la info del guard y la incorpora al request
   async findChequesByUser(@Request() req) {
-    const user = await req.user;
-    return await this.chequesService.findAll(user.userId);
+    const userId = await req.user;
+    return await this.chequesService.findAll(userId);
   }
   // buscar cheque por ID
   @Get(':id')
   @UseGuards(AuthGuard)
   async findOne(@Request() req: any, @Param('id') id: string) {
-    const user = await req.user;
-    return await this.chequesService.findOne(user.userId, +id);
+    const userId = await req.user;
+    return await this.chequesService.findOne(userId, +id);
   }
   // modificar cheque
   @Patch(':id')
@@ -47,8 +47,8 @@ export class ChequesController {
     @Body() updateChequeDto: UpdateChequeDto,
     @Request() req: any,
   ) {
-    const user = await req.user;
-    return this.chequesService.update(user.userId, +id, updateChequeDto);
+    const userId = await req.user;
+    return this.chequesService.update(userId, +id, updateChequeDto);
   }
 
   @Delete(':id')

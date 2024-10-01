@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user-dto';
@@ -16,6 +17,7 @@ import { UpdateUserDto } from './dto/update-user-dto';
 import { AuthService } from './auth.service';
 import { AdminGuard } from 'src/guards/admin/admin.guard';
 import { ValidateUserDto } from './dto/validate-user-dto';
+import { AuthGuard } from 'src/guards/authGuard/authGuard';
 // distintas rutas y decoradores
 
 @Controller('user')
@@ -30,7 +32,7 @@ export class UserController {
   //   response.status(200).send('esta es la respuesta');
   // }
   @Get()
-  @UseGuards(AdminGuard)
+  //@UseGuards(AdminGuard)
   getAllUsers() {
     return this.userDbService.getAllUser();
   }
@@ -62,10 +64,10 @@ export class UserController {
   }
 
   // modificar usuario (solo admin)
-  @Put(':id')
-  @UseGuards(AdminGuard)
-  updateUser(@Param('id') id: string, @Body() user: UpdateUserDto) {
-    return this.userDbService.updateUser(user, id);
+  @Put()
+  @UseGuards(AuthGuard)
+  async updateUser(@Request() idUser: any, @Body() user: UpdateUserDto) {
+    return this.userDbService.updateUser(user, idUser.user);
   }
 
   // borrar usuario (solo admin)

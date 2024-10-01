@@ -12,7 +12,6 @@ export class AuthService {
   ) {}
   async signIn(user: CreateUserDto) {
     const dbUser = await this.userDbService.getUserByEmail(user.email);
-    console.log(user);
     if (dbUser.length > 0) {
       throw new BadRequestException('email existente');
     }
@@ -21,7 +20,6 @@ export class AuthService {
       ...user,
       isActive: true,
       password: hashPassword,
-      cheques: [],
     });
     return { message: 'success create user' };
   }

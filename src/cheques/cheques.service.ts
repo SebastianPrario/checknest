@@ -4,41 +4,33 @@ import { UpdateChequeDto } from './dto/update-cheque.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cheque } from './entities/cheque.entity';
-import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class ChequesService {
   constructor(
     @InjectRepository(Cheque)
     private chequesRepository: Repository<Cheque>,
-    @InjectRepository(User)
-    private dbUserRepository: Repository<User>,
   ) {}
   // crear cheques en BD relacionado con ID del usuario
   async create(createChequeDto: CreateChequeDto, req: string) {
     const newCheck = { ...createChequeDto };
+    newCheck.user = req;
     await this.chequesRepository.save(newCheck);
-    const userDb = await this.dbUserRepository.findOneBy({
-      id: req,
-    });
-    if (userDb) {
-      newCheck.user = userDb;
-      await this.chequesRepository.save(newCheck);
-    }
+    return 'cheque creado';
   }
 
   async findAll(userId: string): Promise<Cheque[]> {
     return await this.chequesRepository.find({
-      where: { user: { id: userId } },
+      where: { user: userId },
     });
   }
 
-  async findOne(userId: string, id: number) {
+  async findOne(userId: string, idCheck: number) {
     try {
       const foundCheck = await this.chequesRepository.findOne({
         where: {
-          user: { id: userId },
-          id: id,
+          user: userId,
+          id: idCheck,
         },
       });
       if (foundCheck) {
@@ -52,16 +44,21 @@ export class ChequesService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async update(userId: string, id: number, updateChequeDto: UpdateChequeDto) {
+  async update(
+    userId: string,
+    idCheck: number,
+    updateChequeDto: UpdateChequeDto,
+  ) {
     try {
       const updatecheck = await this.chequesRepository.findOne({
         where: {
-          user: { id: userId },
-          id: id,
+          user: userId,
+          id: idCheck,
         },
       });
+      Object.assign(updatecheck, updateChequeDto);
       if (updatecheck) {
-        return;
+        this.chequesRepository.save(updatecheck);
       } else {
         return 'Cheque no encontrado';
       }

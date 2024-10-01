@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { User } from './../../user/user.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { State } from '../enum/state.enum';
+
 @Entity()
 export class Cheque {
   @PrimaryGeneratedColumn()
@@ -9,7 +9,7 @@ export class Cheque {
   @Column()
   numero: number;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   importe: number;
 
   @Column()
@@ -37,6 +37,6 @@ export class Cheque {
   @Column({ default: false })
   borrado: boolean;
 
-  @ManyToOne(() => User, (user) => user.cheques)
-  user: User;
+  @Column()
+  user: string;
 }

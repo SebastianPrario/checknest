@@ -1,11 +1,12 @@
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class CreateChequeDto {
   @IsNotEmpty()
-  @Length(10)
   numero: number;
 
   @IsNotEmpty()
+  @Transform(({ value }) => Number.parseFloat(value).toFixed(2))
   importe: number;
 
   @IsNotEmpty()
