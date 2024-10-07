@@ -1,10 +1,20 @@
 import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { logMiddleware } from './middleware/loggerMiddleware';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const options = new DocumentBuilder()
+    .setTitle('Gestion de Cheques API')
+    .setDescription('Api de Gestion de Cheques')
+    .setVersion('1.0')
+    .addTag('Rutas') // Puedes agregar etiquetas para agrupar tus endpoints
+    .build();
+
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
   app.use(logMiddleware);
   app.useGlobalPipes(
     new ValidationPipe({

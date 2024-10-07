@@ -21,7 +21,18 @@ export class ChequesService {
 
   async findAll(userId: string): Promise<Cheque[]> {
     return await this.chequesRepository.find({
-      where: { user: userId },
+      where: {
+        user: userId,
+        borrado: false,
+      },
+    });
+  }
+  async findErrase(userId: string): Promise<Cheque[]> {
+    return await this.chequesRepository.find({
+      where: {
+        user: userId,
+        borrado: true,
+      },
     });
   }
 
@@ -67,7 +78,23 @@ export class ChequesService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cheque`;
+  async remove(idCheck: number) {
+    try {
+      const remove = await this.chequesRepository.findOne({
+        where: {
+          id: idCheck,
+        },
+      });
+
+      if (remove.borrado) {
+        remove.borrado = false;
+        this.chequesRepository.save(remove);
+      } else {
+        remove.borrado = true;
+        this.chequesRepository.save(remove);
+      }
+    } catch (error) {
+      console.error('Error al buscar el cheque:', error.message);
+    }
   }
 }

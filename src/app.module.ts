@@ -30,7 +30,7 @@ import { Cheque } from './cheques/entities/cheque.entity';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         entities: [User, Cheque],
-        dropSchema: true,
+        dropSchema: false,
         synchronize: true,
         logging: true,
       }),
