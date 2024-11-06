@@ -7,6 +7,8 @@ import { User } from './user/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ChequesModule } from './cheques/cheques.module';
 import { Cheque } from './cheques/entities/cheque.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/order.entity';
 
 @Module({
   imports: [
@@ -17,7 +19,7 @@ import { Cheque } from './cheques/entities/cheque.entity';
     // inicializa la configuracion del JWT para usar en toda la app
     JwtModule.register({
       global: true,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '10h' },
       secret: process.env.JWT_SECRET,
     }),
     TypeOrmModule.forRootAsync({
@@ -29,7 +31,7 @@ import { Cheque } from './cheques/entities/cheque.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [User, Cheque],
+        entities: [User, Cheque, Order],
         dropSchema: false,
         synchronize: true,
         logging: true,
@@ -39,6 +41,8 @@ import { Cheque } from './cheques/entities/cheque.entity';
     UserModule,
 
     ChequesModule,
+
+    OrdersModule,
   ],
   controllers: [],
   providers: [AppService],

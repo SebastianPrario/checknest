@@ -22,7 +22,7 @@ export class CreateUserDto {
     example: 'juan Perez',
     required: true,
   })
-  nombre: string;
+  name: string;
 
   @IsEmail()
   @Length(10, 50)
@@ -44,12 +44,5 @@ export class CreateUserDto {
   })
   password: string;
 
-  @IsEnum(UserRole)
-  @ApiProperty({
-    title: ' Role',
-    description: 'user o admin',
-    example: 'admin',
-    required: true,
-  })
-  role: string;
+  role: boolean;
 }

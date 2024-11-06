@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Order } from 'src/orders/entities/order.entity';
 import { State } from '../enum/state.enum';
 
 @Entity()
@@ -11,6 +12,9 @@ export class Cheque {
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   importe: number;
+
+  @Column()
+  cliente: string;
 
   @Column()
   librador: string;
@@ -27,11 +31,13 @@ export class Cheque {
   @Column({
     type: 'enum',
     enum: State,
-    default: 'encartera',
+    default: State.encartera,
   })
   estado: string;
 
-  @Column()
+  @Column({
+    default: null,
+  })
   proveedor: string;
 
   @Column({ default: false })
@@ -39,4 +45,6 @@ export class Cheque {
 
   @Column()
   user: string;
+
+  @ManyToOne(() => Order, (order) => order.cheque) order: Order;
 }

@@ -31,7 +31,7 @@ export class AuthService {
       : 0;
     if (!validatePassword || !userDb) return 'usuario o password incorrecta';
     const payload = {
-      sub: userDb.nombre,
+      sub: userDb.name,
       userId: userDb.id,
       role: userDb.role,
     };

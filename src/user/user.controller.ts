@@ -59,19 +59,24 @@ export class UserController {
     return this.userDbService.getUserById(id);
   }
   //crear usuario nuevo solo los administradores pueden crear usuarios
-  @Post('signin')
+  @Post('signup')
   @ApiOperation({
     summary: 'crea un usuario nuevo (privada)',
   })
-  @UseGuards(AdminGuard)
+  //@UseGuards(AdminGuard)
   createUser(@Body() user: CreateUserDto) {
-    if (!user.nombre || !user.email || !user.password || !user.role)
+    if (
+      !user.name ||
+      !user.email ||
+      !user.password ||
+      typeof user.role !== 'boolean'
+    )
       return 'faltan datos';
-    return this.authService.signIn(user);
+    else return this.authService.signIn(user);
   }
 
   //logearse : devuelve un token
-  @Post('signup')
+  @Post('signin')
   @ApiOperation({
     summary: 'Logeo de usuario (privada)',
   })

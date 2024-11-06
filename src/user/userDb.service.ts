@@ -22,7 +22,7 @@ export class UserDbService {
   }
 
   async getUserOnlyAdmin() {
-    const user = await this.userRepository.find({ where: { role: 'admin' } });
+    const user = await this.userRepository.find({ where: { role: true } });
     return user ? user : new NotFoundException('usuario no encontrado');
   }
   getUserByEmail(email: string) {

@@ -1,4 +1,4 @@
 export enum State {
-  encarter = 'encartera',
+  encartera = 'encartera',
   entregado = 'entregado',
 }

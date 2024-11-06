@@ -16,7 +16,9 @@ export function logMiddleware(
   res: Response,
   next: NextFunction,
 ): any {
-  const ahora = new Date().toLocaleTimeString()
-  console.log(`se recibio una peticion ${req.method} en la ruta ${req.url} a las ${ahora}`);
+  const ahora = new Date().toLocaleTimeString();
+  console.log(
+    `se recibio una peticion ${req.method} en la ruta ${req.url} a las ${ahora}`,
+  );
   next();
 }

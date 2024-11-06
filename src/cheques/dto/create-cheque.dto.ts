@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 
 export class CreateChequeDto {
   @IsNotEmpty()
@@ -21,6 +21,16 @@ export class CreateChequeDto {
   })
   @Transform(({ value }) => Number.parseFloat(value).toFixed(2))
   importe: number;
+
+  @IsNotEmpty()
+  @Length(2)
+  @ApiProperty({
+    title: 'cliente',
+    description: 'nombre del cliente que entrego el cheque',
+    example: 'Sebastian Garcia',
+    required: true,
+  })
+  cliente: string;
 
   @IsNotEmpty()
   @Length(2)
@@ -60,13 +70,12 @@ export class CreateChequeDto {
   })
   banco: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsOptional()
   @ApiProperty({
     title: 'Proveedor',
     description: 'es quien entrego el cheque',
     example: 'Pedro Marmol',
-    required: true,
   })
   proveedor: string;
 

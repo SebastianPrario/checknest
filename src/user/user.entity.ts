@@ -7,17 +7,13 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string = uuid();
   @Column()
-  nombre: string;
+  name: string;
   @Column()
   email: string;
   @Column({ default: true })
   isActive: boolean;
   @Column()
   password: string;
-  @Column({
-    type: 'enum',
-    enum: Role,
-    default: 'user',
-  })
-  role: string;
+  @Column({ default: false })
+  role: boolean;
 }
