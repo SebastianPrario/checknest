@@ -68,8 +68,10 @@ export class ChequesService {
         },
       });
       Object.assign(updatecheck, updateChequeDto);
+      console.log(updatecheck);
       if (updatecheck) {
-        this.chequesRepository.save(updatecheck);
+        await this.chequesRepository.save(updatecheck);
+        return 'cheque modificado';
       } else {
         return 'Cheque no encontrado';
       }

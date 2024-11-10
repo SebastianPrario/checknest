@@ -33,7 +33,8 @@ export class ChequesController {
   // obtener cheques no borrados
   @Get()
   @ApiOperation({
-    summary: 'Obtener Listado de Cheques que no estan borrados y que estan en cartera',
+    summary:
+      'Obtener Listado de Cheques que no estan borrados y que estan en cartera',
   })
   @UseGuards(AuthGuard)
   // toma la info del guard y la incorpora al request
