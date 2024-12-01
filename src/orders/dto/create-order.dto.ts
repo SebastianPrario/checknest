@@ -5,12 +5,8 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  isString,
   IsString,
-  Length,
-  ValidateNested,
-} from 'class-validator';
-import { Cheque } from 'src/cheques/entities/cheque.entity';
+ } from 'class-validator';
 
 class DataOtherPaymentDto {
   @IsString()
@@ -50,7 +46,7 @@ export class CreateOrderDto {
 
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
+  //@ValidateNested({ each: true })
   @Type(() => DataOtherPaymentDto)
   @ApiProperty({
     title: 'otros pagos ',

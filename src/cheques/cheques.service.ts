@@ -4,6 +4,7 @@ import { UpdateChequeDto } from './dto/update-cheque.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cheque } from './entities/cheque.entity';
+import { State } from './enum/state.enum';
 
 @Injectable()
 export class ChequesService {
@@ -24,6 +25,7 @@ export class ChequesService {
       where: {
         user: userId,
         borrado: false,
+        estado: State.encartera,
       },
     });
   }
