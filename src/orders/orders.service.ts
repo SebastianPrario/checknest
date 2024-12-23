@@ -73,6 +73,13 @@ export class OrdersService {
       .leftJoinAndSelect('order.cheque', 'cheque')
       .where(`order.id = :idOrder`, { idOrder })
       .getOne();
+    const totalOtherPayment = order.otherPayment.reduce(
+      (acc, curr) => acc + curr.number,
+      0,
+    );
+git 
+    order.totalAmount = totalOtherPayment + Number(order.totalAmount);
+    console.log(order.totalAmount);
     return order;
   }
 
