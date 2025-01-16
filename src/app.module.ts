@@ -19,7 +19,7 @@ import { Order } from './orders/entities/order.entity';
     // inicializa la configuracion del JWT para usar en toda la app
     JwtModule.register({
       global: true,
-      signOptions: { expiresIn: '10h' },
+      signOptions: { expiresIn: '1h' },
       secret: process.env.JWT_SECRET,
     }),
     TypeOrmModule.forRootAsync({

@@ -8,6 +8,7 @@ import { State } from './enum/state.enum';
 
 @Injectable()
 export class ChequesService {
+ 
   constructor(
     @InjectRepository(Cheque)
     private chequesRepository: Repository<Cheque>,
@@ -20,12 +21,30 @@ export class ChequesService {
     return 'cheque creado';
   }
 
-  async findAll(userId: string): Promise<Cheque[]> {
+  async findAll(
+    userId: string,
+    orderBy?: string,
+    orderDirection?: 'ASC' | 'DESC',
+  ): Promise<Cheque[]> {
+    const validOrderFields = [
+      'numero',
+      'importe',
+      'cliente',
+      'librador',
+      'fechaEmision',
+      'fechaEntrega',
+      'banco',
+    ];
+    const orderField = validOrderFields.includes(orderBy) ? orderBy : 'id';
+    const direction = orderDirection === 'DESC' ? 'DESC' : 'ASC';
     return await this.chequesRepository.find({
       where: {
         user: userId,
         borrado: false,
         estado: State.encartera,
+      },
+      order: {
+        [orderField]: direction,
       },
     });
   }
@@ -74,6 +93,26 @@ export class ChequesService {
       if (updatecheck) {
         await this.chequesRepository.save(updatecheck);
         return 'cheque modificado';
+      } else {
+        return 'Cheque no encontrado';
+      }
+    } catch (error) {
+      console.error('Error al buscar el cheque:', error.message);
+    }
+  }
+
+  async findByNumber(userId: any, number: number) {
+    try {
+      const foundCheck = await this.chequesRepository.findOne({
+        where: {
+          user: userId,
+          numero: number,
+        },
+        relations: ['order'],
+      });
+      if (foundCheck) {
+        console.log(foundCheck);
+        return foundCheck;
       } else {
         return 'Cheque no encontrado';
       }

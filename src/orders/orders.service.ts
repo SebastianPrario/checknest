@@ -47,7 +47,7 @@ export class OrdersService {
             this.chequesRepository.save(check);
           }),
         );
-        if (!controlCheck) return `orden ${order.id} creada`;
+        if (!controlCheck) return `orden creada`;
         else {
           await this.orderRepository.delete({ id: order.id });
           return 'cheques ya imputados';
@@ -77,9 +77,8 @@ export class OrdersService {
       (acc, curr) => acc + curr.number,
       0,
     );
-git 
+
     order.totalAmount = totalOtherPayment + Number(order.totalAmount);
-    console.log(order.totalAmount);
     return order;
   }
 

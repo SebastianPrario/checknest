@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { ChequesService } from './cheques.service';
 import { CreateChequeDto } from './dto/create-cheque.dto';
@@ -34,13 +35,29 @@ export class ChequesController {
   @Get()
   @ApiOperation({
     summary:
-      'Obtener Listado de Cheques que no estan borrados y que estan en cartera',
+      'Obtener Listado de Cheques que no estan borrados y que estan en cartera. Puede ordenar pasandole una query string en donde las tres ultimas letras ASC o DESC y la primero parte es  numero, importe,cliente,librador,fechaEmision,fechaEntrega,banco',
   })
   @UseGuards(AuthGuard)
   // toma la info del guard y la incorpora al request
-  async findChequesByUser(@Request() req) {
+  async findChequesByUser(@Request() req, @Query('orderBy') order: string) {
+    let abc: 'ASC' | 'DES' | 'DESC' = 'ASC';
+    if (order !== undefined) {
+      abc = order.slice(-3) as 'ASC' | 'DES';
+      abc === 'DES' && (abc = 'DESC');
+      order = order.slice(0, -3);
+    }
     const userId = await req.user;
-    return await this.chequesService.findAll(userId);
+    return await this.chequesService.findAll(userId, order, abc);
+  }
+  @Get('number')
+  @ApiOperation({
+    summary: 'Obtener el cheque pasado por query',
+  })
+  @UseGuards(AuthGuard)
+  // toma la info del guard y la incorpora al request
+  async findChequesByNumber(@Request() req) {
+    const userId = await req.user;
+    return await this.chequesService.findByNumber(userId, req.query.number);
   }
 
   @Get('errase')
