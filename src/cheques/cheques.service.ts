@@ -103,7 +103,7 @@ export class ChequesService {
 
   async findByNumber(userId: any, number: number) {
     try {
-      const foundCheck = await this.chequesRepository.findOne({
+      const foundCheck = await this.chequesRepository.find({
         where: {
           user: userId,
           numero: number,
@@ -111,7 +111,6 @@ export class ChequesService {
         relations: ['order'],
       });
       if (foundCheck) {
-        console.log(foundCheck);
         return foundCheck;
       } else {
         return 'Cheque no encontrado';

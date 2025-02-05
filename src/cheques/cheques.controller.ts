@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { ChequesService } from './cheques.service';
 import { CreateChequeDto } from './dto/create-cheque.dto';
@@ -55,9 +56,19 @@ export class ChequesController {
   })
   @UseGuards(AuthGuard)
   // toma la info del guard y la incorpora al request
-  async findChequesByNumber(@Request() req) {
+  async findChequesByNumber(
+    @Request() req,
+    @Query('number') numberQuery: string,
+  ) {
     const userId = await req.user;
-    return await this.chequesService.findByNumber(userId, req.query.number);
+    if (!numberQuery) {
+      throw new BadRequestException('El parámetro "number" es obligatorio');
+    }
+    const number = Number(numberQuery);
+    if (isNaN(number)) {
+      throw new BadRequestException('El parámetro "number" debe ser un número');
+    }
+    return await this.chequesService.findByNumber(userId, number);
   }
 
   @Get('errase')
