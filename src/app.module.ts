@@ -9,6 +9,8 @@ import { ChequesModule } from './cheques/cheques.module';
 import { Cheque } from './cheques/entities/cheque.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
+import { BankModule } from './bank/bank.module';
+import { Bank } from './bank/entities/bank.entity';
 
 @Module({
   imports: [
@@ -32,9 +34,13 @@ import { Order } from './orders/entities/order.entity';
         // username: configService.get('DB_USERNAME'),
         // password: configService.get('DB_PASSWORD'),
         // database: configService.get('DB_NAME'),
-        entities: [User, Cheque, Order],
+        entities: [User, Cheque, Order, Bank],
         dropSchema: false,
-        synchronize: true,
+        synchronize: false,
+        migrations: [__dirname + '/migrations/*{.ts,.js}'],
+        cli: {
+          migrationsDir: 'src/migrations',
+        },
         logging: true,
       }),
     }),
@@ -44,6 +50,8 @@ import { Order } from './orders/entities/order.entity';
     ChequesModule,
 
     OrdersModule,
+
+    BankModule,
   ],
   controllers: [],
   providers: [AppService],
