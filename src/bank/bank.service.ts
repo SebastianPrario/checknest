@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,7 +18,10 @@ export class BankService {
 
   async create(createBankDto: CreateBankDto, idUser: string) {
     const bankExists = await this.bankRepository.findOne({
-      where: { bank: createBankDto.bank },
+      where: {
+        bank: createBankDto.bank,
+        user: idUser,
+      },
     });
     if (bankExists) {
       return 'BANCO YA EXISTE';
