@@ -33,8 +33,10 @@ export class BankController {
   @ApiOperation({
     summary: 'Listar Bancos por usuario',
   })
+  @UseGuards(AuthGuard)
   async findAll(@Request() req) {
     const userId = await req.user;
+    console.log(userId);
     return this.bankService.findAll(userId);
   }
 

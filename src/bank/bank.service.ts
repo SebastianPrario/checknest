@@ -21,7 +21,7 @@ export class BankService {
       where: { bank: createBankDto.bank },
     });
     if (bankExists) {
-      throw new ConflictException('El banco ya existe');
+      return 'BANCO YA EXISTE';
     }
 
     const newBank: NewBank = { ...createBankDto };
@@ -31,6 +31,7 @@ export class BankService {
   }
 
   findAll(userId: string) {
+    console.log(userId);
     return this.bankRepository.find({
       where: {
         user: userId,
