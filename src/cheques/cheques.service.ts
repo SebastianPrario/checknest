@@ -48,6 +48,19 @@ export class ChequesService {
       },
     });
   }
+  async ObtenerChequesPorCliente(
+    userId: string,
+    cliente: string,
+  ): Promise<Cheque[]> {
+    console.log(cliente)
+    return await this.chequesRepository.find({
+      where: {
+        user: userId,
+        borrado: false,
+        cliente: cliente,
+      },
+    });
+  }
   async findErrase(userId: string): Promise<Cheque[]> {
     return await this.chequesRepository.find({
       where: {
@@ -62,6 +75,7 @@ export class ChequesService {
       const foundCheck = await this.chequesRepository.findOne({
         where: {
           user: userId,
+          borrado: false,
           id: idCheck,
         },
       });

@@ -10,23 +10,27 @@ import {
   Request,
   Query,
   BadRequestException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ChequesService } from './cheques.service';
 import { CreateChequeDto } from './dto/create-cheque.dto';
 import { UpdateChequeDto } from './dto/update-cheque.dto';
 import { AuthGuard } from 'src/guards/authGuard/authGuard';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UppercaseInterceptor } from 'src/Interceptor/uppercase.interceptor';
 
 @Controller('cheques')
 @ApiTags('Check - ruta privada - requiere token')
 export class ChequesController {
   constructor(private readonly chequesService: ChequesService) {}
 
+  // crear cheque
   @Post()
   @ApiOperation({
     summary: 'Crear un nuevo cheque',
   })
   @UseGuards(AuthGuard)
+  @UseInterceptors(UppercaseInterceptor)
   async create(@Request() req, @Body() createChequeDto: CreateChequeDto) {
     const userId = await req.user;
     return this.chequesService.create(createChequeDto, userId);
@@ -39,7 +43,6 @@ export class ChequesController {
       'Obtener Listado de Cheques que no estan borrados y que estan en cartera. Puede ordenar pasandole una query string en donde las tres ultimas letras ASC o DESC y la primero parte es  numero, importe,cliente,librador,fechaEmision,fechaEntrega,banco',
   })
   @UseGuards(AuthGuard)
-  // toma la info del guard y la incorpora al request
   async findChequesByUser(@Request() req, @Query('orderBy') order: string) {
     let abc: 'ASC' | 'DES' | 'DESC' = 'ASC';
     if (order !== undefined) {
@@ -50,12 +53,29 @@ export class ChequesController {
     const userId = await req.user;
     return await this.chequesService.findAll(userId, order, abc);
   }
+
+  // obtener cheques no borrados por cliente
+  @Get('cliente')
+  @ApiOperation({
+    summary:
+      'Obtener Cheques por cliente que no estan borrados y que estan en cartera. Puede ordenar pasandole una query string en donde las tres ultimas letras ASC o DESC y la primero parte es  numero, importe,cliente,librador,fechaEmision,fechaEntrega,banco',
+  })
+  @UseGuards(AuthGuard)
+  @UseInterceptors(UppercaseInterceptor)
+  async ObtenerChequesPorCliente(
+    @Request() req,
+    @Query('cliente') cliente: string,
+  ) {
+    console.log('entra', cliente);
+    const userId = await req.user;
+    return await this.chequesService.ObtenerChequesPorCliente(userId, cliente);
+  }
+  // obtener cheque por numero
   @Get('number')
   @ApiOperation({
     summary: 'Obtener el cheque pasado por query',
   })
   @UseGuards(AuthGuard)
-  // toma la info del guard y la incorpora al request
   async findChequesByNumber(
     @Request() req,
     @Query('number') numberQuery: string,
@@ -71,17 +91,17 @@ export class ChequesController {
     return await this.chequesService.findByNumber(userId, number);
   }
 
+  // lista de cheques borrados
   @Get('errase')
   @ApiOperation({
     summary: 'Lista cheques borrados por usuario logeado',
   })
   @UseGuards(AuthGuard)
-  // toma la info del guard y la incorpora al request
   async findErrase(@Request() req) {
     const userId = await req.user;
     return await this.chequesService.findErrase(userId);
   }
-
+  // buscar cheques por ID
   @Get(':id')
   @ApiOperation({
     summary: 'Busca cheques por ID',
@@ -91,6 +111,7 @@ export class ChequesController {
     const userId = await req.user;
     return await this.chequesService.findOne(userId, +id);
   }
+
   // modificar cheque
   @Patch(':id')
   @ApiOperation({
