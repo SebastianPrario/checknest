@@ -52,7 +52,7 @@ export class ChequesService {
     userId: string,
     cliente: string,
   ): Promise<Cheque[]> {
-    console.log(cliente)
+    console.log(cliente);
     return await this.chequesRepository.find({
       where: {
         user: userId,
