@@ -17,45 +17,47 @@ export class OrdersService {
   ) {}
   // crear orden en BD relacionado con ID del usuario
   async create(createOrderDto: CreateOrderDto, userId: string) {
-    return this.orderRepository.manager.transaction(async () => {
-      try {
-        const newOrder = {
-          destination: createOrderDto.destination,
-          totalAmount: createOrderDto.totalAmount,
-          detail: createOrderDto.detail,
-          otherPayment: createOrderDto.otherPayment,
-          creationDate: createOrderDto.creationDate,
-          user: userId,
-        };
-        const order = await this.orderRepository.save(newOrder);
-        const arrayChecks = createOrderDto.chequesId;
-        let controlCheck = false;
-        await Promise.all(
-          arrayChecks.map(async (cheque: number) => {
-            const check: any = await this.ChequeService.findOne(
-              newOrder.user,
-              cheque,
-            );
-            // controla que el cheque este en cartera //
-            if (check.estado == 'entregado') {
-              return (controlCheck = true);
-            }
-            // si el cheque existe y esta en cartera se actualiza
-            check.order = newOrder;
-            check.estado = 'entregado';
-            check.proveedor = newOrder.destination;
-            this.chequesRepository.save(check);
-          }),
-        );
-        if (!controlCheck) return `orden creada`;
-        else {
-          await this.orderRepository.delete({ id: order.id });
-          return 'cheques ya imputados';
+    return this.orderRepository.manager.transaction(
+      async (transactionalEntityManager) => {
+        try {
+          const newOrder = {
+            destination: createOrderDto.destination,
+            totalAmount: createOrderDto.totalAmount,
+            detail: createOrderDto.detail,
+            otherPayment: createOrderDto.otherPayment,
+            creationDate: createOrderDto.creationDate,
+            user: userId,
+          };
+          const order = await transactionalEntityManager.save(Order, newOrder);
+          const arrayChecks = createOrderDto.chequesId;
+          let controlCheck = false;
+          await Promise.all(
+            arrayChecks.map(async (cheque: number) => {
+              const check: any = await this.ChequeService.findOne(
+                newOrder.user,
+                cheque,
+              );
+              // controla que el cheque este en cartera //
+              if (check.estado == 'entregado') {
+                return (controlCheck = true);
+              }
+              // si el cheque existe y esta en cartera se actualiza
+              check.order = newOrder;
+              check.estado = 'entregado';
+              check.proveedor = newOrder.destination;
+              await transactionalEntityManager.save(Cheque, check);
+            }),
+          );
+          if (!controlCheck) return `orden creada`;
+          else {
+            await transactionalEntityManager.delete(Order, { id: order.id });
+            return 'cheques ya imputados';
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
-    });
+      },
+    );
   }
 
   async findAllOrders(userId: string) {
