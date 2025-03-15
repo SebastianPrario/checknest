@@ -66,7 +66,6 @@ export class ChequesController {
     @Request() req,
     @Query('cliente') cliente: string,
   ) {
-    console.log('entra', cliente);
     const userId = await req.user;
     return await this.chequesService.ObtenerChequesPorCliente(userId, cliente);
   }
@@ -131,7 +130,7 @@ export class ChequesController {
   @ApiOperation({
     summary: 'Borrado Logico de Cheque',
   })
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.chequesService.remove(+id);
   }
 }

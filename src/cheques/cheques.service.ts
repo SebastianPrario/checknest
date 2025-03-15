@@ -121,6 +121,7 @@ export class ChequesService {
         where: {
           user: userId,
           numero: number,
+          borrado: false,
         },
         relations: ['order'],
       });
