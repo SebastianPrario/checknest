@@ -11,6 +11,7 @@ import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { BankModule } from './bank/bank.module';
 import { Bank } from './bank/entities/bank.entity';
+import { EmisorModule } from './emisor/emisor.module';
 
 @Module({
   imports: [
@@ -52,6 +53,8 @@ import { Bank } from './bank/entities/bank.entity';
     OrdersModule,
 
     BankModule,
+
+    EmisorModule,
   ],
   controllers: [],
   providers: [AppService],
