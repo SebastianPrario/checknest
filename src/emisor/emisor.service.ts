@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as https from 'https';
+import { mockEmisorInfo, mockChequesInfo } from './__mocks__/emisor.mock';
 
 @Injectable()
 export class EmisorService {
@@ -23,14 +24,7 @@ export class EmisorService {
       });
       const info = response.data;
       if (info.results) {
-        const response = [
-          {
-            denominacion: info.results.denominacion || '',
-            situacion: info.results.periodos[0].entidades.map(
-              (entidad) => entidad.situacion,
-            ),
-          },
-        ];
+        const response = mockChequesInfo;
         return response;
       } else return [];
     } catch (error) {
@@ -40,32 +34,10 @@ export class EmisorService {
 
   async chequesInfo(cuit: string) {
     const URL = process.env.APIBCRA;
+    if (cuit === '20999999990') {
+      return mockChequesInfo;
+    }
     try {
-      if (cuit === '20999999990') {
-        return [
-          {
-            entidades: [
-              {
-                detalle: [
-                  {
-                    nroCheque: 752395,
-                    fechaRechazo: '2024-04-08',
-                    monto: 115000.0,
-                    fechaPago: null,
-                    fechaPagoMulta: null,
-                    estadoMulta: 'IMPAGA',
-                    ctaPersonal: false,
-                    denomJuridica: 'HM COLON MONTAJES INDUSTRIALES S. R. L.',
-                    enRevision: false,
-                    procesoJud: false,
-                  },
-                ],
-              },
-            ],
-          },
-        ];
-      }
-
       const response = await axios.get(
         `${URL}/Deudas/ChequesRechazados/${cuit}`,
         {
@@ -75,7 +47,6 @@ export class EmisorService {
         },
       );
       const info = response.data;
-      console.log(info);
       if (info) {
         return info.results.causales;
       } else return [];
