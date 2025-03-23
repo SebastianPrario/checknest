@@ -24,7 +24,14 @@ export class EmisorService {
       });
       const info = response.data;
       if (info.results) {
-        const response = mockChequesInfo;
+        const response = [
+          {
+            denominacion: info.results.denominacion || '',
+            situacion: info.results.periodos[0].entidades.map(
+              (entidad) => entidad.situacion,
+            ),
+          },
+        ];
         return response;
       } else return [];
     } catch (error) {
