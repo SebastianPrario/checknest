@@ -5,6 +5,14 @@ import * as https from 'https';
 @Injectable()
 export class EmisorService {
   async emisorInfo(cuit: string) {
+    console.log(cuit);
+    if (cuit === '20999999990')
+      return [
+        {
+          denominacion: 'Ejemplo S.A.',
+          situacion: [3],
+        },
+      ];
     const URL = process.env.APIBCRA;
     try {
       const response = await axios.get(`${URL}/Deudas/${cuit}`, {
@@ -23,7 +31,6 @@ export class EmisorService {
             ),
           },
         ];
-
         return response;
       } else return [];
     } catch (error) {
@@ -34,6 +41,31 @@ export class EmisorService {
   async chequesInfo(cuit: string) {
     const URL = process.env.APIBCRA;
     try {
+      if (cuit === '20999999990') {
+        return [
+          {
+            entidades: [
+              {
+                detalle: [
+                  {
+                    nroCheque: 752395,
+                    fechaRechazo: '2024-04-08',
+                    monto: 115000.0,
+                    fechaPago: null,
+                    fechaPagoMulta: null,
+                    estadoMulta: 'IMPAGA',
+                    ctaPersonal: false,
+                    denomJuridica: 'HM COLON MONTAJES INDUSTRIALES S. R. L.',
+                    enRevision: false,
+                    procesoJud: false,
+                  },
+                ],
+              },
+            ],
+          },
+        ];
+      }
+
       const response = await axios.get(
         `${URL}/Deudas/ChequesRechazados/${cuit}`,
         {
@@ -43,6 +75,7 @@ export class EmisorService {
         },
       );
       const info = response.data;
+      console.log(info);
       if (info) {
         return info.results.causales;
       } else return [];
